@@ -1,9 +1,10 @@
 # This is a research project to test the new GPT function calling 
 In order to use this code you will need a mid to advanced level understanding of Python. The function_call.py code will function as is and serve as a good example of how to communicate with the OpenAI API to automate a task that requires two function calls from one prompt input. But in order for the image_generator.py and ig_poster.py files to work will require quite a few setup steps.
 
-## Set OpenAI API key as system variable
+## Set API keys as system variable
 ```
 OPEN_AI_KEY
+DISCORD_BOT_TOKEN
 ```
 
 ## To get image_generator.py to work: 
