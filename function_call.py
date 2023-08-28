@@ -4,8 +4,6 @@ import os
 import re
 import image_generator
 import ig_poster
-import finances
-
 
 openai.api_key = os.environ.get('OPEN_AI_KEY')
 
@@ -16,9 +14,6 @@ def generate_image(text_input_prompt):
 def post_to_ig(instagram_caption):
     ig_poster.auto_post(instagram_caption)
     return 'Instagram post is live!'
-
-def get_grocery_transactions():
-    return finances.get_grocery_transactions()
 
 def clean_dictionary(s):
     # Replace Unicode escape sequences
