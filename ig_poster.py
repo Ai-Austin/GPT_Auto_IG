@@ -1,4 +1,3 @@
-#POST TO INSTAGRAM AUTOMATION
 import subprocess
 import osascript
 import pyautogui
