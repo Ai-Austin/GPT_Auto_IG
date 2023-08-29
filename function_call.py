@@ -48,7 +48,7 @@ def post_to_ig(instagram_caption):
 def handle_function_call(response):
     available_functions = {
         'generate_image': generate_image,
-        'post_to_ig': post_to_ig,
+        'post_to_ig': post_to_ig
     }  
     
     function_name = response['choices'][0]['message']['function_call']['name']
@@ -61,14 +61,13 @@ def handle_function_call(response):
         function_response = function_to_call(function_args['instagram_caption'])
 
     print(function_name + ' function call has completed.')
-    
     messages.append({'role': 'function', 'name': function_name, 'content': function_response})
 
 def run_conversation():
     print('Type your prompt to ChatGPT: ')
+    
     while True:
-        # Makes sure we are only sending 4 total converation messages and system prompt as messages in our new API calls.
-        # This will avoid spending unnecessarily for context prompt tokens and prevent input prompt size from exceeding max tokens. 
+        # Keep our messages limited to 5 to minimize overspending unnecessarily for OpenAI tokens
         if len(messages) > 5:
             messages = [messages[0]] + messages[-4:]
         
@@ -95,6 +94,7 @@ def run_conversation():
             else:
                 print('ChatGPT: ' + response['choices'][0]['message']['content'])
                 messages.append({'role': 'assistant', 'content': response['choices'][0]['message']['content']})
+                
         else:
             print('ChatGPT: ' + response['choices'][0]['message']['content'])
             messages.append({'role': 'assistant', 'content': response['choices'][0]['message']['content']})
