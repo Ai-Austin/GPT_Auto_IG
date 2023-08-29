@@ -1,5 +1,3 @@
-# discord_bot.py
-
 import discord
 from discord.ext import commands
 import requests
@@ -29,6 +27,7 @@ def split_image(image_file):
 
 async def download_image(url, filename):
     response = requests.get(url)
+    
     if response.status_code == 200:
         input_folder = "input"
         output_folder = "output"
@@ -51,6 +50,7 @@ async def download_image(url, filename):
             file_prefix = ""
         else:
             file_prefix = "UPSCALED_"
+            
         top_left, top_right, bottom_left, bottom_right = split_image(input_file)
 
         if quadrant == "1":
