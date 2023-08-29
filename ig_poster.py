@@ -40,6 +40,9 @@ def auto_post(caption):
     # 6. POST
     share_button = pyautogui.locateOnScreen('pyautogui_images/share_button.png')
     pyautogui.click(share_button)
+    # 7. Mimimize Safari
+    time.sleep(3)
+    pyautogui.hotkey('command', 'm')
 
 if __name__ =='__main__':
     auto_post('AI is lit AF.')

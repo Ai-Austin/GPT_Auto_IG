@@ -64,6 +64,7 @@ async def download_image(url, filename):
 
         os.remove(f"{directory}/{input_folder}/{filename}")
         await client.close()
+        pyautogui.hotkey('command', 'm')
 
 def run_bot(text_input_prompt):
     @client.event
