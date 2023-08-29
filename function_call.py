@@ -69,8 +69,8 @@ def run_conversation():
     while True:
         # Makes sure we are only sending 4 total converation messages and system prompt as messages in our new API calls.
         # This will avoid spending unnecessarily for context prompt tokens and prevent input prompt size from exceeding max tokens. 
-        if len(messages) > 6:
-            messages = [messages[0], messages[-4], messages[-3], messages[-2], messages[-1]]
+        if len(messages) > 5:
+            messages = [messages[0]] + messages[-4:]
         
         user_prompt = input('User: ')
         messages.append({'role': 'user', 'content': user_prompt})
