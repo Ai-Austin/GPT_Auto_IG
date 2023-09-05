@@ -44,10 +44,14 @@ async def download_image(url, filename):
         input_file = os.path.join(input_folder, filename)  
 
         if "UPSCALED_" not in filename:
-            loop = asyncio.get_event_loop()
-            print('Which image should I use? (1 = top left, 2 = top right, 3 = bottom left, 4 = bottom right)')
-            quadrant = await loop.run_in_executor(None, input, "Enter your choice: ")
-            file_prefix = ""
+            # Selects top left image from quad image, 
+            # comment line 50 and uncomment line 51 to 53 to
+            # manually select which image for the agent to use.
+            quadrant = '1'
+            #loop = asyncio.get_event_loop()
+            #print('Which image should I use? (1 = top left, 2 = top right, 3 = bottom left, 4 = bottom right)')
+            #quadrant = await loop.run_in_executor(None, input, "Enter your choice: ")
+            file_prefix = ''
         else:
             file_prefix = "UPSCALED_"
             
