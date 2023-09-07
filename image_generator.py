@@ -1,6 +1,6 @@
 import discord
 from discord.ext import commands
-import requests
+import aiohttp  # <-- Added
 from PIL import Image
 import os
 import asyncio
@@ -17,7 +17,6 @@ def split_image(image_file):
         width, height = im.size
         mid_x = width // 2
         mid_y = height // 2
-        # Splits quad image into individual sections
         top_left = im.crop((0, 0, mid_x, mid_y))
         top_right = im.crop((mid_x, 0, width, mid_y))
         bottom_left = im.crop((0, mid_y, mid_x, height))
@@ -26,49 +25,43 @@ def split_image(image_file):
         return top_left, top_right, bottom_left, bottom_right
 
 async def download_image(url, filename):
-    response = requests.get(url)
-    
-    if response.status_code == 200:
-        input_folder = "input"
-        output_folder = "output"
+    async with aiohttp.ClientSession() as session:
+        async with session.get(url) as resp:
+            if resp.status == 200:
+                data = await resp.read()
 
-        if not os.path.exists(output_folder):
-            os.makedirs(output_folder)
-        if not os.path.exists(input_folder):
-            os.makedirs(input_folder)
+                input_folder = "input"
+                output_folder = "output"
+                
+                if not os.path.exists(output_folder):
+                    os.makedirs(output_folder)
+                if not os.path.exists(input_folder):
+                    os.makedirs(input_folder)
 
-        with open(f"{directory}/{input_folder}/{filename}", "wb") as f:
-            f.write(response.content)
+                with open(f"{directory}/{input_folder}/{filename}", "wb") as f:
+                    f.write(data)
 
-        print(f"Image downloaded: {filename}")
-        input_file = os.path.join(input_folder, filename)  
+                print(f"Image downloaded: {filename}")
+                input_file = os.path.join(input_folder, filename)  
 
-        if "UPSCALED_" not in filename:
-            # Selects top left image from quad image, 
-            # comment line 50 and uncomment line 51 to 53 to
-            # manually select which image for the agent to use.
-            quadrant = '1'
-            #loop = asyncio.get_event_loop()
-            #print('Which image should I use? (1 = top left, 2 = top right, 3 = bottom left, 4 = bottom right)')
-            #quadrant = await loop.run_in_executor(None, input, "Enter your choice: ")
-            file_prefix = ''
-        else:
-            file_prefix = "UPSCALED_"
-            
-        top_left, top_right, bottom_left, bottom_right = split_image(input_file)
+                if "UPSCALED_" not in filename:
+                    quadrant = '1'
+                else:
+                    file_prefix = "UPSCALED_"
+                    
+                top_left, top_right, bottom_left, bottom_right = split_image(input_file)
 
-        if quadrant == "1":
-            top_left.save(os.path.join(output_folder, file_prefix + "ig_img.jpg"))
-        elif quadrant == "2":
-            top_right.save(os.path.join(output_folder, file_prefix + "ig_img.jpg"))
-        elif quadrant == "3":
-            bottom_left.save(os.path.join(output_folder, file_prefix + "ig_img.jpg"))
-        elif quadrant == "4":
-            bottom_right.save(os.path.join(output_folder, file_prefix + "ig_img.jpg"))
-
-        os.remove(f"{directory}/{input_folder}/{filename}")
-        await client.close()
-        pyautogui.hotkey('command', 'm')
+                if quadrant == "1":
+                    top_left.save(os.path.join(output_folder, "ig_img.jpg"))
+                elif quadrant == "2":
+                    top_right.save(os.path.join(output_folder, "ig_img.jpg"))
+                elif quadrant == "3":
+                    bottom_left.save(os.path.join(output_folder, "ig_img.jpg"))
+                elif quadrant == "4":
+                    bottom_right.save(os.path.join(output_folder, "ig_img.jpg"))
+                os.remove(f"{directory}/{input_folder}/{filename}")
+                pyautogui.hotkey('command', 'm')
+                await client.close()
 
 def run_bot(text_input_prompt):
     @client.event
@@ -77,7 +70,6 @@ def run_bot(text_input_prompt):
         asyncio.create_task(send_prompt(text_input_prompt))
 
     async def send_prompt(text_input_prompt):
-        text_input_prompt = text_input_prompt
         print('Running Discord GUI automation to send /imagine prompt to your Midjourney channel.')
         subprocess.call(['open', '-a', 'Discord'])
         time.sleep(2)
