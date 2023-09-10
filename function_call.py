@@ -63,7 +63,6 @@ def handle_function_call(response):
         function_response = function_to_call(function_args['instagram_caption'])
 
     print(function_name + ' function call has completed.')
-    
     messages.append({'role': 'function', 'name': function_name, 'content': function_response})
 
 def run_conversation():
@@ -95,19 +94,24 @@ def run_conversation():
                 functions=functions,
                 function_call='auto'
             )
+
             input_tokens += second_response['usage']['prompt_tokens']
             output_tokens += second_response['usage']['completion_tokens']
+
             if second_response['choices'][0]['finish_reason'] == 'function_call':
                 handle_function_call(second_response)
             else:
                 print('ChatGPT: ' + response['choices'][0]['message']['content'])
                 messages.append({'role': 'assistant', 'content': response['choices'][0]['message']['content']})
+
         else:
             print('ChatGPT: ' + response['choices'][0]['message']['content'])
             messages.append({'role': 'assistant', 'content': response['choices'][0]['message']['content']})
+            
         print('Input tokens: ' + str(input_tokens))
         print('Output tokens: ' + str(output_tokens))
         input_price = input_tokens / 1000 * 0.0015
         output_price = output_tokens / 1000 * 0.002
         print('Task Price in USD: $' + str("{:.5f}".format(input_price + output_price)))
+
 run_conversation()
